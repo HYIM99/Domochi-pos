@@ -28,7 +28,7 @@
         .login-box { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); text-align: center; width: 90%; max-width: 400px; }
         .login-box img { width: 90px; height: 90px; border-radius: 50%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .login-input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .login-input { flex: 1; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 1.2rem; text-align: center; outline: none; font-weight: bold; }
+        .login-input { flex: 1; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 1.2rem; text-align: center; outline: none; font-weight: bold; width: 100%; }
         .login-input:focus { border-color: var(--brand-primary); }
         .btn-primary { width: 100%; background: var(--brand-primary); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(223,79,83,0.3); transition: 0.2s; }
         .btn-primary:active { transform: scale(0.96); }
@@ -80,6 +80,11 @@
         .modal-box { background: white; border-radius: 24px; animation: zoomIn 0.2s ease; overflow: hidden; }
         @keyframes zoomIn { from { transform: scale(0.95); opacity:0; } to { transform: scale(1); opacity:1; } }
 
+        /* 选项选择器按钮样式 (共用) */
+        .split-options { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
+        .split-btn { flex: 1; padding: 10px 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; color: #666; font-size: 0.9rem;}
+        .split-btn.active { background: white; color: var(--brand-primary); box-shadow: var(--shadow); }
+
         /* 折扣弹窗 */
         .discount-modal { width: 350px; padding: 25px; text-align: center; }
         .disc-type-selector { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
@@ -93,10 +98,6 @@
         
         .pay-amount-display { font-size: 3rem; font-weight: 900; color: var(--brand-primary); text-align: center; margin-bottom: 20px; }
         
-        .split-options { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
-        .split-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; color: #666; }
-        .split-btn.active { background: white; color: var(--brand-primary); box-shadow: var(--shadow); }
-
         .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .pm-btn { padding: 20px; border: 2px solid #eee; border-radius: 16px; background: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; color: #555; transition: 0.2s;}
         .pm-btn.active { border-color: var(--brand-primary); background: #fff5f5; color: var(--brand-primary); }
@@ -177,7 +178,6 @@
             <div class="cart-list" id="pos-cart"></div>
             
             <div class="cart-footer">
-                <!-- 折扣信息区 -->
                 <div class="discount-row">
                     <span>Subtotale (原价)</span>
                     <strong id="cart-subtotal">€ 0.00</strong>
@@ -196,7 +196,7 @@
         </div>
     </div>
 
-    <!-- ================= 3. 交接班对账界面 (含点钞网格) ================= -->
+    <!-- ================= 3. 交接班对账界面 ================= -->
     <div id="view-shift" class="spa-view">
         <div class="shift-container">
             <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 20px;"><i class="fa-solid fa-clipboard-list"></i> Chiusura Turno (交接班核对)</h2>
@@ -217,7 +217,7 @@
 
                 <div style="margin-top:30px; background:#fffbe6; padding:20px; border-radius:16px; border:1px solid #ffe58f;">
                     <h3 style="margin-bottom:5px; color:#fa8c16;">Controllo Cassa (点钞助手)</h3>
-                    <p style="font-size:0.85rem; color:#888; margin-bottom:15px;">Inserisci la quantità per ogni taglio. (输入张数/枚数自动计算总额)</p>
+                    <p style="font-size:0.85rem; color:#888; margin-bottom:15px;">Inserisci la quantità per ogni taglio. (输入纸币/硬币数量自动计算总额)</p>
                     
                     <div class="denom-grid" id="denom-grid">
                         <div class="denom-item"><label>€ 100</label><input type="number" min="0" data-val="100" class="denom-input" oninput="calcDenominations()"></div>
@@ -251,7 +251,15 @@
     </div>
 
     <!-- ================= 弹窗区 ================= -->
-    <!-- 1. 折扣弹窗 -->
+    
+    <!-- 全新：产品深度定制及备注弹窗 -->
+    <div class="modal-overlay" id="prod-overlay">
+        <div class="modal-box" id="prod-modal-content" style="width: 90%; max-width: 450px; max-height: 90vh; display: flex; flex-direction: column;">
+            <!-- 动态生成产品规格面板 -->
+        </div>
+    </div>
+
+    <!-- 折扣弹窗 -->
     <div class="modal-overlay" id="discount-modal">
         <div class="modal-box discount-modal">
             <h3 style="margin-bottom:15px;">Applica Sconto</h3>
@@ -267,7 +275,7 @@
         </div>
     </div>
 
-    <!-- 2. 支付弹窗 (含多方式和拆单) -->
+    <!-- 支付弹窗 (含多方式和拆单) -->
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-box pay-modal">
             <div class="pay-left">
@@ -364,7 +372,7 @@
         let cart = {};
         
         // 折扣状态
-        let discountType = 'percent'; // percent, amount
+        let discountType = 'percent'; 
         let discountValue = 0; 
 
         // 支付状态
@@ -374,6 +382,15 @@
         let selectedItemKeysForSplit = [];
         let finalAmountToPay = 0;
 
+        // 产品选项状态
+        let currentModalProduct = null;
+        let currentSelection = {};
+
+        // 语言
+        const dict = {
+            it: { login_title: "Accesso Cassa", login_btn: "ACCEDI" },
+            zh: { login_title: "收银系统登录", login_btn: "进入" }
+        };
         let lang = 'it';
 
         setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('it-IT'); }, 1000);
@@ -388,6 +405,16 @@
                 navigateTo('login');
             }
         };
+
+        function setLang(l) {
+            lang = l;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(dict[l][key]) el.innerText = dict[l][key];
+            });
+            renderProducts();
+            updateCartUI();
+        }
 
         function navigateTo(viewId) {
             document.querySelectorAll('.spa-view').forEach(v => v.classList.remove('active'));
@@ -480,7 +507,7 @@
             }
         }
 
-        /* ================= 业务：购物车与折扣 ================= */
+        /* ================= 业务：产品菜单展示 ================= */
         function switchCategory(cat) {
             currentCat = cat;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -491,9 +518,9 @@
         function renderProducts() {
             const list = document.getElementById('pos-products');
             list.innerHTML = allProducts.filter(p => p.category === currentCat).map(p => {
-                const name = p[`name_${lang}`] || p.name_it;
+                const name = p[`name_${lang}`] || p.name_it || 'Prodotto';
                 return `
-                <div class="prod-card" onclick="addToCart(${p.id})">
+                <div class="prod-card" onclick="openProductModal(${p.id})">
                     <img src="${p.image_url || 'https://i.ibb.co/gMcnX8yj/IMG-0668.jpg'}">
                     <h4>${name}</h4>
                     <div class="price">€ ${parseFloat(p.price).toFixed(2)}</div>
@@ -501,14 +528,142 @@
             }).join('');
         }
 
-        function addToCart(pid) {
+        /* ================= 业务：产品深度定制选项弹窗 ================= */
+        function openProductModal(pid) {
             const p = allProducts.find(x => x.id === pid);
-            const key = `p_${pid}`;
-            if(!cart[key]) cart[key] = { id: p.id, name: p.name_it, price: parseFloat(p.price), qty: 0 };
-            cart[key].qty++;
-            updateCartUI();
+            if (!p) return;
+            currentModalProduct = p;
+            
+            // 默认配置
+            currentSelection = {
+                size: 'standard',
+                temp: 'Freddo (冷)',
+                ice: 'Normale (正常)',
+                sugar: 'Normale (正常)'
+            };
+
+            let name = p[`name_${lang}`] || p.name_it || 'Prodotto';
+            
+            let html = `
+                <div style="padding: 20px; text-align: center; border-bottom: 1px solid #eee; position:relative; flex-shrink:0;">
+                    <h2 style="margin:0; font-size:1.5rem; color:var(--brand-primary);">${name}</h2>
+                    <button onclick="closeProductModal()" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:1.5rem; color:#ccc; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div style="padding: 20px; overflow-y: auto; flex:1; text-align:left;">
+            `;
+
+            if(p.has_large) {
+                const lp = p.large_price || 1.0;
+                html += `
+                    <h4 style="margin-bottom:10px; color:#666;">Formato (杯型)</h4>
+                    <div class="split-options" style="margin-bottom:20px; flex-wrap: wrap;">
+                        <button class="split-btn active" onclick="toggleOption(this, 'size', 'standard')">Regolare (常规)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'size', 'Grande')">Grande (+€${lp.toFixed(2)})</button>
+                    </div>
+                `;
+            }
+
+            if(p.category === 'drinks') {
+                html += `
+                    <h4 style="margin-bottom:10px; color:#666;">Temperatura (温度)</h4>
+                    <div class="split-options" style="margin-bottom:20px; flex-wrap: wrap;">
+                        <button class="split-btn active" onclick="toggleOption(this, 'temp', 'Freddo (冷)')">Freddo (冷)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'temp', 'Ambiente (常温)')">Ambiente (常温)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'temp', 'Caldo (热)')">Caldo (热)</button>
+                    </div>
+
+                    <h4 style="margin-bottom:10px; color:#666;">Ghiaccio (冰量)</h4>
+                    <div class="split-options" style="margin-bottom:20px; flex-wrap: wrap;">
+                        <button class="split-btn active" onclick="toggleOption(this, 'ice', 'Normale (正常)')">Normale (正常)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'ice', 'Poco (少冰)')">Poco (少冰)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'ice', 'Molto (加冰)')">Molto (加冰)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'ice', 'Senza (去冰)')">Senza (无冰)</button>
+                    </div>
+
+                    <h4 style="margin-bottom:10px; color:#666;">Zucchero (甜度)</h4>
+                    <div class="split-options" style="margin-bottom:20px; flex-wrap: wrap;">
+                        <button class="split-btn active" onclick="toggleOption(this, 'sugar', 'Normale (正常)')">Normale (正常)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'sugar', 'Poco (少糖)')">Poco (少糖)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'sugar', 'Molto (加糖)')">Molto (加糖)</button>
+                        <button class="split-btn" onclick="toggleOption(this, 'sugar', 'Senza (无糖)')">Senza (无糖)</button>
+                    </div>
+                `;
+            }
+
+            html += `
+                    <h4 style="margin-bottom:10px; color:#666;">Note (手动备注)</h4>
+                    <input type="text" id="modal-notes" class="login-input" placeholder="Es. Senza panna (其他特殊要求)..." style="font-size:1rem; font-weight:normal; margin-bottom:0; text-align:left;">
+                </div>
+                <div style="padding: 20px; border-top: 1px solid #eee; background:#fafafa; flex-shrink:0;">
+                    <button class="btn-primary" style="padding:20px; font-size:1.2rem;" onclick="confirmCustomOrder()">AGGIUNGI AL CARRELLO (加入购物车)</button>
+                </div>
+            `;
+
+            document.getElementById('prod-modal-content').innerHTML = html;
+            document.getElementById('prod-overlay').classList.add('show');
         }
 
+        function closeProductModal() {
+            document.getElementById('prod-overlay').classList.remove('show');
+        }
+
+        function toggleOption(btn, type, val) {
+            btn.parentElement.querySelectorAll('.split-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentSelection[type] = val;
+        }
+
+        function confirmCustomOrder() {
+            const p = currentModalProduct;
+            const notes = document.getElementById('modal-notes').value.trim();
+            
+            let finalName = p[`name_${lang}`] || p.name_it || 'Prodotto';
+            let extraPrice = 0;
+            let attrs = [];
+
+            // 1. 处理杯型加价
+            if (p.has_large && currentSelection.size === 'Grande') {
+                finalName += ` (Grande)`;
+                extraPrice = parseFloat(p.large_price) || 1.0;
+            }
+
+            // 2. 处理饮品配置标签
+            if (p.category === 'drinks') {
+                if (currentSelection.temp !== 'Freddo (冷)') attrs.push(currentSelection.temp);
+                
+                // 逻辑防呆：如果是热饮，不显示冰量
+                if (currentSelection.temp !== 'Caldo (热)') {
+                    if(currentSelection.ice !== 'Normale (正常)') attrs.push(currentSelection.ice);
+                }
+                
+                if (currentSelection.sugar !== 'Normale (正常)') attrs.push(currentSelection.sugar);
+            }
+
+            if (attrs.length > 0) {
+                finalName += ` [${attrs.join(', ')}]`;
+            }
+
+            if (notes) {
+                finalName += ` - ${notes}`;
+            }
+
+            // 安全的编码方式确保同样的配置能完美叠加在同一行显示
+            const cartKey = `p_${p.id}_${btoa(encodeURIComponent(finalName))}`;
+
+            if(!cart[cartKey]) {
+                cart[cartKey] = { 
+                    id: p.id, 
+                    name: finalName, 
+                    price: parseFloat(p.price) + extraPrice, 
+                    qty: 0 
+                };
+            }
+            cart[cartKey].qty++;
+            updateCartUI();
+            closeProductModal();
+        }
+
+        /* ================= 业务：购物车与折扣 ================= */
         function changeQty(key, amt) {
             cart[key].qty += amt;
             if(cart[key].qty <= 0) delete cart[key];
@@ -530,9 +685,9 @@
                 const item = cart[k];
                 return `
                 <div class="cart-item">
-                    <div style="flex:1;">
-                        <div style="font-weight:bold;">${item.name}</div>
-                        <div style="color:var(--brand-primary); font-size:0.9rem;">€ ${item.price.toFixed(2)}</div>
+                    <div style="flex:1; padding-right:10px;">
+                        <div style="font-weight:bold; line-height:1.3;">${item.name}</div>
+                        <div style="color:var(--brand-primary); font-size:0.9rem; margin-top:4px;">€ ${item.price.toFixed(2)}</div>
                     </div>
                     <div class="qty-ctrl">
                         <button onclick="changeQty('${k}', -1)">-</button>
@@ -551,7 +706,6 @@
             document.getElementById('cart-total').innerText = `€ ${total.toFixed(2)}`;
         }
 
-        /* 折扣操作 */
         function openDiscountModal() {
             document.getElementById('discount-modal').classList.add('show');
             document.getElementById('discount-input').value = discountValue > 0 ? discountValue : '';
@@ -644,7 +798,7 @@
                 <label style="display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #eee; cursor:pointer;">
                     <input type="checkbox" value="${k}" ${checked} onchange="toggleSplitItem('${k}')" style="width:20px; height:20px;">
                     <div style="flex:1;">
-                        <div style="font-weight:bold;">${item.qty}x ${item.name}</div>
+                        <div style="font-weight:bold; line-height:1.3;">${item.qty}x ${item.name}</div>
                         <div style="color:var(--brand-primary); font-size:0.9rem;">€ ${(item.price * item.qty).toFixed(2)}</div>
                     </div>
                 </label>`;
@@ -664,7 +818,6 @@
             let total = 0;
             selectedItemKeysForSplit.forEach(k => { total += cart[k].price * cart[k].qty; });
             
-            // 如果整单有折扣，这里选品付款按照比例平摊折扣
             const subtotal = getCartSubtotal();
             const discountAmt = getDiscountAmount(subtotal);
             if (discountAmt > 0 && subtotal > 0) {
@@ -730,9 +883,8 @@
                 selectedItemKeysForSplit.forEach(k => delete cart[k]);
                 selectedItemKeysForSplit = [];
                 updateCartUI();
-                if (Object.keys(cart).length === 0) discountValue = 0; // 购物车空了自动清空折扣
+                if (Object.keys(cart).length === 0) discountValue = 0; 
             } else if (currentSplitMode === 'even') {
-                // 平摊付款不剔除商品，通常连续刷卡N次，这里简化为整单清空
                 clearCart();
             } else {
                 clearCart();
