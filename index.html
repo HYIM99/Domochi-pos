@@ -44,11 +44,12 @@
         .op-badge { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         
         /* ================= 2. 主收银界面 ================= */
-        .cassa-layout { flex: 1; display: flex; overflow: hidden; }
+        /* 核心修复：强制横向排列，防止被推到下方 */
+        .cassa-layout { flex: 1; display: flex; flex-direction: row !important; overflow: hidden; height: 100%; }
         .cassa-left { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow: hidden; }
         
-        /* 强制右侧购物车固定并占据一定宽度 */
-        .cassa-right { width: 420px; min-width: 420px; max-width: 420px; background: white; display: flex; flex-direction: column; box-shadow: -5px 0 20px rgba(0,0,0,0.05); z-index: 10; border-left: 1px solid #eee; flex-shrink: 0; }
+        /* 强制右侧购物车固定并占据一定宽度，且保持全高 */
+        .cassa-right { width: 420px; min-width: 420px; max-width: 420px; background: white; display: flex; flex-direction: column; box-shadow: -5px 0 20px rgba(0,0,0,0.05); z-index: 10; border-left: 1px solid #eee; flex-shrink: 0; height: 100%; }
 
         .cat-bar { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; flex-shrink: 0; padding-bottom: 5px;}
         .cat-btn { padding: 12px 24px; border-radius: 12px; border: 2px solid transparent; background: white; font-weight: 700; cursor: pointer; box-shadow: var(--shadow); white-space: nowrap; }
@@ -252,7 +253,7 @@
 
     <!-- ================= 弹窗区 ================= -->
     
-    <!-- 全新：产品深度定制及备注弹窗 -->
+    <!-- 产品深度定制及备注弹窗 -->
     <div class="modal-overlay" id="prod-overlay">
         <div class="modal-box" id="prod-modal-content" style="width: 90%; max-width: 450px; max-height: 90vh; display: flex; flex-direction: column;">
             <!-- 动态生成产品规格面板 -->
