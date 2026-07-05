@@ -44,11 +44,9 @@
         .op-badge { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         
         /* ================= 2. 主收银界面 ================= */
-        /* 核心修复：强制横向排列，防止被推到下方 */
         .cassa-layout { flex: 1; display: flex; flex-direction: row !important; overflow: hidden; height: 100%; }
         .cassa-left { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow: hidden; }
         
-        /* 强制右侧购物车固定并占据一定宽度，且保持全高 */
         .cassa-right { width: 420px; min-width: 420px; max-width: 420px; background: white; display: flex; flex-direction: column; box-shadow: -5px 0 20px rgba(0,0,0,0.05); z-index: 10; border-left: 1px solid #eee; flex-shrink: 0; height: 100%; }
 
         .cat-bar { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; flex-shrink: 0; padding-bottom: 5px;}
@@ -62,7 +60,6 @@
         .prod-card h4 { font-size: 0.9rem; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; height: 2.4em;}
         .prod-card .price { color: var(--brand-primary); font-weight: bold; }
 
-        /* 购物车区 */
         .cart-header { padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .cart-list { flex: 1; overflow-y: auto; padding: 10px 20px; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eee; }
@@ -81,27 +78,26 @@
         .modal-box { background: white; border-radius: 24px; animation: zoomIn 0.2s ease; overflow: hidden; }
         @keyframes zoomIn { from { transform: scale(0.95); opacity:0; } to { transform: scale(1); opacity:1; } }
 
-        /* 选项选择器按钮样式 (共用) */
         .split-options { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
         .split-btn { flex: 1; padding: 10px 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; color: #666; font-size: 0.9rem;}
         .split-btn.active { background: white; color: var(--brand-primary); box-shadow: var(--shadow); }
 
-        /* 折扣弹窗 */
         .discount-modal { width: 350px; padding: 25px; text-align: center; }
         .disc-type-selector { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
         .disc-type-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #666; }
         .disc-type-btn.active { background: white; color: var(--brand-primary); box-shadow: var(--shadow); }
 
-        /* 支付弹窗 */
-        .pay-modal { width: 90%; max-width: 800px; height: 80vh; display: flex; }
+        .pay-modal { width: 95%; max-width: 900px; height: 85vh; display: flex; }
         .pay-left { flex: 1; padding: 30px; background: #fafafa; border-right: 1px solid #eee; display: flex; flex-direction: column;}
         .pay-right { flex: 1.2; padding: 30px; display: flex; flex-direction: column; overflow-y: auto;}
         
         .pay-amount-display { font-size: 3rem; font-weight: 900; color: var(--brand-primary); text-align: center; margin-bottom: 20px; }
         
-        .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .pm-btn { padding: 20px; border: 2px solid #eee; border-radius: 16px; background: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; color: #555; transition: 0.2s;}
+        /* 支付方式网格更新为 5 个按钮 */
+        .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .pm-btn { padding: 12px 10px; border: 2px solid #eee; border-radius: 12px; background: white; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #555; transition: 0.2s; text-align: center;}
         .pm-btn.active { border-color: var(--brand-primary); background: #fff5f5; color: var(--brand-primary); }
+        .pm-btn i { font-size: 1.5rem; }
 
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #666; font-size: 0.9rem;}
@@ -116,7 +112,6 @@
         .stat-box h4 { font-size: 0.9rem; color: #888; margin-bottom: 5px; }
         .stat-box p { font-size: 1.8rem; font-weight: 900; color: var(--text-main); }
 
-        /* 点钞网格 */
         .denom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 15px; }
         .denom-item { display: flex; align-items: center; justify-content: space-between; background: white; padding: 8px 12px; border-radius: 10px; border: 1px solid #ddd; }
         .denom-item label { font-weight: bold; color: #555; }
@@ -256,7 +251,7 @@
     <!-- 产品深度定制及备注弹窗 -->
     <div class="modal-overlay" id="prod-overlay">
         <div class="modal-box" id="prod-modal-content" style="width: 90%; max-width: 450px; max-height: 90vh; display: flex; flex-direction: column;">
-            <!-- 动态生成产品规格面板 -->
+            <!-- 动态生成 -->
         </div>
     </div>
 
@@ -276,18 +271,23 @@
         </div>
     </div>
 
-    <!-- 支付弹窗 (含多方式和拆单) -->
+    <!-- 支付弹窗 (5 种支付方式) -->
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-box pay-modal">
             <div class="pay-left">
                 <h3 style="margin-bottom:20px; font-size:1.4rem;">Metodo di Pagamento</h3>
                 <div class="pay-methods">
-                    <button class="pm-btn active" id="pm-cash" onclick="setPayMethod('cash')"><i class="fa-solid fa-money-bill-wave" style="color:#52c41a;"></i> Contanti (现金)</button>
-                    <button class="pm-btn" id="pm-card" onclick="setPayMethod('card')"><i class="fa-solid fa-credit-card" style="color:#1890ff;"></i> Carta (刷卡)</button>
-                    <button class="pm-btn" id="pm-mixed" style="grid-column:1/-1; padding:12px; font-size:1rem;" onclick="setPayMethod('mixed')"><i class="fa-solid fa-scale-balanced" style="color:#faad14;"></i> Misto (一半现金一半刷卡)</button>
+                    <button class="pm-btn active" id="pm-cash_manual" onclick="setPayMethod('cash_manual')"><i class="fa-solid fa-hand-holding-dollar" style="color:#52c41a;"></i> Contanti Manuale<br><small>(人工现金)</small></button>
+                    <button class="pm-btn" id="pm-cash_auto" onclick="setPayMethod('cash_auto')"><i class="fa-solid fa-cash-register" style="color:#52c41a;"></i> Cassa Automatica<br><small>(自动收款机)</small></button>
+                    
+                    <button class="pm-btn" id="pm-card_manual" onclick="setPayMethod('card_manual')"><i class="fa-solid fa-credit-card" style="color:#1890ff;"></i> Carta Manuale<br><small>(人工刷卡)</small></button>
+                    <button class="pm-btn" id="pm-card_auto" onclick="setPayMethod('card_auto')"><i class="fa-solid fa-wifi" style="color:#1890ff;"></i> POS Automatico<br><small>(自动刷卡机)</small></button>
+                    
+                    <button class="pm-btn" id="pm-mixed" style="grid-column:1/-1;" onclick="setPayMethod('mixed')"><i class="fa-solid fa-scale-balanced" style="color:#faad14;"></i> Misto<br><small>(一半现金一半刷卡)</small></button>
                 </div>
 
-                <div id="cash-panel">
+                <!-- 1. 人工现金面板 -->
+                <div id="panel-cash_manual">
                     <div class="input-group">
                         <label>Contanti Ricevuti (实收现金) €</label>
                         <input type="number" class="money-input" id="cash-given" placeholder="0.00" oninput="calcChange()">
@@ -298,7 +298,28 @@
                     </div>
                 </div>
 
-                <div id="mixed-panel" style="display:none;">
+                <!-- 2. 自动收款机面板 -->
+                <div id="panel-cash_auto" style="display:none; text-align:center; padding:10px 0;">
+                    <i class="fa-solid fa-coins fa-bounce" style="font-size:3rem; color:#52c41a; margin-bottom:15px;"></i>
+                    <p style="font-weight:bold; color:#666;">In attesa della cassa automatica...</p>
+                    <button class="btn-primary" style="background:#52c41a; margin-top:15px;" onclick="simulateAutoMachine('cash', event)">Invia a Cassa Automatica (传给自动收款机)</button>
+                </div>
+
+                <!-- 3. 人工刷卡面板 -->
+                <div id="panel-card_manual" style="display:none; text-align:center; padding:10px 0;">
+                    <i class="fa-solid fa-check-double" style="font-size:3rem; color:#1890ff; margin-bottom:15px;"></i>
+                    <p style="font-weight:bold; color:#666;">Transazione manuale sul POS.<br>Premi Conferma dopo aver ricevuto il pagamento.</p>
+                </div>
+
+                <!-- 4. 自动刷卡机面板 -->
+                <div id="panel-card_auto" style="display:none; text-align:center; padding:10px 0;">
+                    <i class="fa-solid fa-wifi fa-beat-fade" style="font-size:3rem; color:#1890ff; margin-bottom:15px;"></i>
+                    <p style="font-weight:bold; color:#666;">In attesa del POS automatico...</p>
+                    <button class="btn-primary" style="background:#1890ff; margin-top:15px;" onclick="simulateAutoMachine('card', event)">Invia al POS (传给自动刷卡机)</button>
+                </div>
+
+                <!-- 5. 混合支付面板 -->
+                <div id="panel-mixed" style="display:none;">
                     <div class="input-group">
                         <label>Quota Contanti (交现金部分) €</label>
                         <input type="number" class="money-input" id="mixed-cash" placeholder="0.00" oninput="calcMixed()">
@@ -309,11 +330,6 @@
                     </div>
                 </div>
 
-                <div id="card-panel" style="display:none; text-align:center; padding:20px 0;">
-                    <i class="fa-solid fa-wifi fa-beat-fade" style="font-size:3rem; color:#1890ff; margin-bottom:15px;"></i>
-                    <p style="font-weight:bold; color:#666;">In attesa del POS...</p>
-                    <button class="btn-primary" style="background:#1890ff; margin-top:15px;" onclick="simulateAutoCashier()">Invia a Cassa Automatica (发送到自动收款机)</button>
-                </div>
             </div>
             
             <div class="pay-right">
@@ -377,7 +393,7 @@
         let discountValue = 0; 
 
         // 支付状态
-        let currentPayMethod = 'cash'; 
+        let currentPayMethod = 'cash_manual'; // cash_manual, cash_auto, card_manual, card_auto, mixed
         let currentSplitMode = 'all'; 
         let splitPersons = 2;
         let selectedItemKeysForSplit = [];
@@ -535,14 +551,7 @@
             if (!p) return;
             currentModalProduct = p;
             
-            // 默认配置
-            currentSelection = {
-                size: 'standard',
-                temp: 'Freddo (冷)',
-                ice: 'Normale (正常)',
-                sugar: 'Normale (正常)'
-            };
-
+            currentSelection = { size: 'standard', temp: 'Freddo (冷)', ice: 'Normale (正常)', sugar: 'Normale (正常)' };
             let name = p[`name_${lang}`] || p.name_it || 'Prodotto';
             
             let html = `
@@ -604,9 +613,7 @@
             document.getElementById('prod-overlay').classList.add('show');
         }
 
-        function closeProductModal() {
-            document.getElementById('prod-overlay').classList.remove('show');
-        }
+        function closeProductModal() { document.getElementById('prod-overlay').classList.remove('show'); }
 
         function toggleOption(btn, type, val) {
             btn.parentElement.querySelectorAll('.split-btn').forEach(b => b.classList.remove('active'));
@@ -622,42 +629,26 @@
             let extraPrice = 0;
             let attrs = [];
 
-            // 1. 处理杯型加价
             if (p.has_large && currentSelection.size === 'Grande') {
                 finalName += ` (Grande)`;
                 extraPrice = parseFloat(p.large_price) || 1.0;
             }
 
-            // 2. 处理饮品配置标签
             if (p.category === 'drinks') {
                 if (currentSelection.temp !== 'Freddo (冷)') attrs.push(currentSelection.temp);
-                
-                // 逻辑防呆：如果是热饮，不显示冰量
                 if (currentSelection.temp !== 'Caldo (热)') {
                     if(currentSelection.ice !== 'Normale (正常)') attrs.push(currentSelection.ice);
                 }
-                
                 if (currentSelection.sugar !== 'Normale (正常)') attrs.push(currentSelection.sugar);
             }
 
-            if (attrs.length > 0) {
-                finalName += ` [${attrs.join(', ')}]`;
-            }
+            if (attrs.length > 0) finalName += ` [${attrs.join(', ')}]`;
+            if (notes) finalName += ` - ${notes}`;
 
-            if (notes) {
-                finalName += ` - ${notes}`;
-            }
-
-            // 安全的编码方式确保同样的配置能完美叠加在同一行显示
             const cartKey = `p_${p.id}_${btoa(encodeURIComponent(finalName))}`;
 
             if(!cart[cartKey]) {
-                cart[cartKey] = { 
-                    id: p.id, 
-                    name: finalName, 
-                    price: parseFloat(p.price) + extraPrice, 
-                    qty: 0 
-                };
+                cart[cartKey] = { id: p.id, name: finalName, price: parseFloat(p.price) + extraPrice, qty: 0 };
             }
             cart[cartKey].qty++;
             updateCartUI();
@@ -723,11 +714,7 @@
             updateCartUI();
             closeDiscountModal();
         }
-        function removeDiscount() {
-            discountValue = 0;
-            updateCartUI();
-            closeDiscountModal();
-        }
+        function removeDiscount() { discountValue = 0; updateCartUI(); closeDiscountModal(); }
 
         /* ================= 业务：高级结账 ================= */
         function openPaymentModal() {
@@ -737,7 +724,7 @@
             finalAmountToPay = Math.max(0, subtotal - getDiscountAmount(subtotal));
 
             setSplitMode('all'); 
-            setPayMethod('cash'); 
+            setPayMethod('cash_manual'); // 默认选中人工现金
             document.getElementById('payment-modal').classList.add('show');
             updatePayDisplay();
         }
@@ -754,10 +741,15 @@
             document.querySelectorAll('.pm-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('pm-' + method).classList.add('active');
             
-            document.getElementById('cash-panel').style.display = method === 'cash' ? 'block' : 'none';
-            document.getElementById('card-panel').style.display = method === 'card' ? 'block' : 'none';
-            document.getElementById('mixed-panel').style.display = method === 'mixed' ? 'block' : 'none';
+            document.getElementById('panel-cash_manual').style.display = method === 'cash_manual' ? 'block' : 'none';
+            document.getElementById('panel-cash_auto').style.display = method === 'cash_auto' ? 'block' : 'none';
+            document.getElementById('panel-card_manual').style.display = method === 'card_manual' ? 'block' : 'none';
+            document.getElementById('panel-card_auto').style.display = method === 'card_auto' ? 'block' : 'none';
+            document.getElementById('panel-mixed').style.display = method === 'mixed' ? 'block' : 'none';
             
+            if(method === 'cash_manual') document.getElementById('cash-given').focus();
+            if(method === 'mixed') document.getElementById('mixed-cash').focus();
+
             calcChange(); calcMixed();
         }
 
@@ -835,7 +827,7 @@
         }
 
         function calcChange() {
-            if(currentPayMethod !== 'cash') return;
+            if(currentPayMethod !== 'cash_manual') return;
             const given = parseFloat(document.getElementById('cash-given').value) || 0;
             const change = given - finalAmountToPay;
             document.getElementById('cash-change').innerText = change >= 0 ? change.toFixed(2) : "0.00";
@@ -849,27 +841,37 @@
             document.getElementById('mixed-card-rem').innerText = cardRem.toFixed(2);
         }
 
-        function simulateAutoCashier() {
+        // 模拟外部设备 API 调用
+        function simulateAutoMachine(type, event) {
             const btn = event.target;
+            const origText = btn.innerHTML;
+            const origBg = btn.style.background;
+            
             btn.innerText = "Connessione in corso... (连接中)";
             setTimeout(() => {
-                btn.style.background = "#52c41a";
+                btn.style.background = type === 'cash' ? "#389e0d" : "#096dd9";
                 btn.innerHTML = "<i class='fa-solid fa-check'></i> Transazione OK";
-                setTimeout(() => finalizePayment(true), 1000);
+                setTimeout(() => {
+                    finalizePayment(true);
+                    // 恢复按钮状态以便下次点击
+                    setTimeout(() => { btn.innerHTML = origText; btn.style.background = origBg; }, 500);
+                }, 1000);
             }, 2000);
         }
 
         async function finalizePayment(autoConfirmed = false) {
             if (finalAmountToPay <= 0) { alert("Nessun importo da pagare."); return; }
-            if (currentPayMethod === 'cash') {
+            if (currentPayMethod === 'cash_manual') {
                 const given = parseFloat(document.getElementById('cash-given').value) || 0;
                 if(given < finalAmountToPay) { alert("Denaro insufficiente! (实收现金不足)"); return; }
             }
 
             let cashToAdd = 0; let cardToAdd = 0;
-            if (currentPayMethod === 'cash') cashToAdd = finalAmountToPay;
-            else if (currentPayMethod === 'card') cardToAdd = finalAmountToPay;
-            else if (currentPayMethod === 'mixed') {
+            if (currentPayMethod === 'cash_manual' || currentPayMethod === 'cash_auto') {
+                cashToAdd = finalAmountToPay;
+            } else if (currentPayMethod === 'card_manual' || currentPayMethod === 'card_auto') {
+                cardToAdd = finalAmountToPay;
+            } else if (currentPayMethod === 'mixed') {
                 cashToAdd = parseFloat(document.getElementById('mixed-cash').value) || 0;
                 cardToAdd = finalAmountToPay - cashToAdd;
             }
