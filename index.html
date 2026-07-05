@@ -46,7 +46,6 @@
         /* ================= 2. 主收银界面 ================= */
         .cassa-layout { flex: 1; display: flex; flex-direction: row !important; overflow: hidden; height: 100%; }
         .cassa-left { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow: hidden; }
-        
         .cassa-right { width: 420px; min-width: 420px; max-width: 420px; background: white; display: flex; flex-direction: column; box-shadow: -5px 0 20px rgba(0,0,0,0.05); z-index: 10; border-left: 1px solid #eee; flex-shrink: 0; height: 100%; }
 
         .cat-bar { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; flex-shrink: 0; padding-bottom: 5px;}
@@ -78,9 +77,16 @@
         .modal-box { background: white; border-radius: 24px; animation: zoomIn 0.2s ease; overflow: hidden; }
         @keyframes zoomIn { from { transform: scale(0.95); opacity:0; } to { transform: scale(1); opacity:1; } }
 
-        .split-options { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
+        .split-options { display: flex; gap: 10px; margin-bottom: 15px; background: #eee; padding: 5px; border-radius: 12px; }
         .split-btn { flex: 1; padding: 10px 5px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; color: #666; font-size: 0.9rem;}
         .split-btn.active { background: white; color: var(--brand-primary); box-shadow: var(--shadow); }
+
+        /* 会员模块样式 */
+        .member-panel { background: #fffcf8; border: 2px solid #ffdfa3; padding: 15px; border-radius: 16px; margin-bottom: 20px; }
+        .member-search { display: flex; gap: 10px; margin-bottom: 10px; }
+        .member-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; outline: none; }
+        .member-btn { background: #faad14; color: white; border: none; padding: 0 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .member-info { display: none; align-items: center; justify-content: space-between; background: white; padding: 10px; border-radius: 10px; border: 1px dashed #faad14; margin-top: 10px;}
 
         .discount-modal { width: 350px; padding: 25px; text-align: center; }
         .disc-type-selector { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
@@ -93,7 +99,6 @@
         
         .pay-amount-display { font-size: 3rem; font-weight: 900; color: var(--brand-primary); text-align: center; margin-bottom: 20px; }
         
-        /* 支付方式网格更新为 5 个按钮 */
         .pay-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
         .pm-btn { padding: 12px 10px; border: 2px solid #eee; border-radius: 12px; background: white; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #555; transition: 0.2s; text-align: center;}
         .pm-btn.active { border-color: var(--brand-primary); background: #fff5f5; color: var(--brand-primary); }
@@ -271,7 +276,7 @@
         </div>
     </div>
 
-    <!-- 支付弹窗 (5 种支付方式) -->
+    <!-- 支付弹窗 (含多方式、会员系统和拆单) -->
     <div class="modal-overlay" id="payment-modal">
         <div class="modal-box pay-modal">
             <div class="pay-left">
@@ -286,7 +291,6 @@
                     <button class="pm-btn" id="pm-mixed" style="grid-column:1/-1;" onclick="setPayMethod('mixed')"><i class="fa-solid fa-scale-balanced" style="color:#faad14;"></i> Misto<br><small>(一半现金一半刷卡)</small></button>
                 </div>
 
-                <!-- 1. 人工现金面板 -->
                 <div id="panel-cash_manual">
                     <div class="input-group">
                         <label>Contanti Ricevuti (实收现金) €</label>
@@ -298,27 +302,23 @@
                     </div>
                 </div>
 
-                <!-- 2. 自动收款机面板 -->
                 <div id="panel-cash_auto" style="display:none; text-align:center; padding:10px 0;">
                     <i class="fa-solid fa-coins fa-bounce" style="font-size:3rem; color:#52c41a; margin-bottom:15px;"></i>
                     <p style="font-weight:bold; color:#666;">In attesa della cassa automatica...</p>
                     <button class="btn-primary" style="background:#52c41a; margin-top:15px;" onclick="simulateAutoMachine('cash', event)">Invia a Cassa Automatica (传给自动收款机)</button>
                 </div>
 
-                <!-- 3. 人工刷卡面板 -->
                 <div id="panel-card_manual" style="display:none; text-align:center; padding:10px 0;">
                     <i class="fa-solid fa-check-double" style="font-size:3rem; color:#1890ff; margin-bottom:15px;"></i>
                     <p style="font-weight:bold; color:#666;">Transazione manuale sul POS.<br>Premi Conferma dopo aver ricevuto il pagamento.</p>
                 </div>
 
-                <!-- 4. 自动刷卡机面板 -->
                 <div id="panel-card_auto" style="display:none; text-align:center; padding:10px 0;">
                     <i class="fa-solid fa-wifi fa-beat-fade" style="font-size:3rem; color:#1890ff; margin-bottom:15px;"></i>
                     <p style="font-weight:bold; color:#666;">In attesa del POS automatico...</p>
                     <button class="btn-primary" style="background:#1890ff; margin-top:15px;" onclick="simulateAutoMachine('card', event)">Invia al POS (传给自动刷卡机)</button>
                 </div>
 
-                <!-- 5. 混合支付面板 -->
                 <div id="panel-mixed" style="display:none;">
                     <div class="input-group">
                         <label>Quota Contanti (交现金部分) €</label>
@@ -329,7 +329,6 @@
                         <div class="change-display" style="color:#1890ff;" id="mixed-card-rem">0.00</div>
                     </div>
                 </div>
-
             </div>
             
             <div class="pay-right">
@@ -340,6 +339,29 @@
                 
                 <div class="pay-amount-display" id="pay-total-display">€ 0.00</div>
 
+                <!-- 会员模块 -->
+                <div class="member-panel">
+                    <h4 style="margin-bottom:8px; color:#faad14;"><i class="fa-solid fa-crown"></i> Dōmochi Club (会员中心)</h4>
+                    <div class="member-search" id="member-search-section">
+                        <input type="tel" id="member-phone" class="member-input" placeholder="Inserisci cellulare (输入手机号查询)">
+                        <button class="member-btn" onclick="searchMember()">Cerca</button>
+                    </div>
+                    <!-- 会员未找到时，显示注册区 -->
+                    <div id="member-register-section" style="display:none; gap:10px; margin-top:10px;">
+                        <input type="text" id="member-name" class="member-input" placeholder="Nome (名字)">
+                        <button class="member-btn" style="background:#52c41a;" onclick="registerMember()">Registra (开卡)</button>
+                    </div>
+                    <!-- 找到会员时，显示信息区 -->
+                    <div class="member-info" id="member-info-section">
+                        <div>
+                            <div style="font-weight:bold; font-size:1.1rem;" id="m-name">Matteo</div>
+                            <div style="color:#888; font-size:0.85rem;"><i class="fa-solid fa-star" style="color:#faad14;"></i> <span id="m-points">0</span> Punti</div>
+                        </div>
+                        <button id="btn-redeem" class="member-btn" style="background:var(--brand-primary); display:none;" onclick="applyMemberDiscount()">-€5 Sconto (扣50分)</button>
+                        <button class="member-btn" style="background:#ccc;" onclick="clearMember()">X</button>
+                    </div>
+                </div>
+
                 <h4 style="margin-bottom:10px; font-size:0.9rem; color:#888;">Divisione Conto (拆单/AA制)</h4>
                 <div class="split-options">
                     <button class="split-btn active" id="sp-all" onclick="setSplitMode('all')">Unico (整单)</button>
@@ -347,7 +369,6 @@
                     <button class="split-btn" id="sp-item" onclick="setSplitMode('item')">Per Articolo (选品)</button>
                 </div>
 
-                <!-- 均摊面板 -->
                 <div id="split-even-panel" style="display:none; margin-bottom:20px; background:#f9f9f9; padding:15px; border-radius:12px; text-align:center;">
                     <label style="font-weight:bold; color:#666; margin-right:10px;">Diviso per (几人平摊):</label>
                     <button class="qty-ctrl" style="border:none; padding:5px 15px; cursor:pointer;" onclick="adjSplitPersons(-1)">-</button>
@@ -356,10 +377,7 @@
                     <div style="margin-top:10px; font-size:1.2rem; font-weight:bold; color:var(--brand-primary);">Quota: <span id="split-even-amount">€ 0.00</span></div>
                 </div>
 
-                <!-- 选品拆单面板 -->
-                <div id="split-item-panel" style="display:none; margin-bottom:20px; flex:1; overflow-y:auto; border:1px solid #eee; border-radius:12px; padding:10px;">
-                    <!-- 动态注入带有 checkbox 的购物车列表 -->
-                </div>
+                <div id="split-item-panel" style="display:none; margin-bottom:20px; flex:1; overflow-y:auto; border:1px solid #eee; border-radius:12px; padding:10px;"></div>
 
                 <div style="flex:1;"></div>
                 <button class="btn-primary" id="btn-confirm-pay" style="padding:24px; font-size:1.3rem;" onclick="finalizePayment()">CONFERMA E STAMPA (结账打印)</button>
@@ -374,36 +392,35 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRodWxoZXl2d21md2ZoaGZqa3RrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5ODMyNzYsImV4cCI6MjA5ODU1OTI3Nn0.cX2-vmJ8TdXvUN-fjx6ufW1fUgklG4kZXsQhdwlHeTQ";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        /* ================= 员工账户配置 ================= */
         const DB_USERS = {
             "1001": { pin: "1234", name: "Matteo" },
             "1002": { pin: "1234", name: "M'Barka" },
-            "1003": { pin: "1234", name: "Mustafa" }
+            "1003": { pin: "1234", name: "Mustafa" },
+            "8888": { pin: "8888", name: "Admin" }
         };
 
         let activeUser = null;
         let shiftData = { start: null, tot_rev: 0, cash_rev: 0, card_rev: 0, orders_count: 0 };
-        
         let allProducts = [];
         let currentCat = 'mochi';
         let cart = {};
         
-        // 折扣状态
         let discountType = 'percent'; 
         let discountValue = 0; 
 
-        // 支付状态
-        let currentPayMethod = 'cash_manual'; // cash_manual, cash_auto, card_manual, card_auto, mixed
+        let currentPayMethod = 'cash_manual'; 
         let currentSplitMode = 'all'; 
         let splitPersons = 2;
         let selectedItemKeysForSplit = [];
         let finalAmountToPay = 0;
 
-        // 产品选项状态
         let currentModalProduct = null;
         let currentSelection = {};
 
-        // 语言
+        // 会员状态
+        let currentMember = null;
+        let memberDiscountApplied = false;
+
         const dict = {
             it: { login_title: "Accesso Cassa", login_btn: "ACCEDI" },
             zh: { login_title: "收银系统登录", login_btn: "进入" }
@@ -412,7 +429,7 @@
 
         setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('it-IT'); }, 1000);
 
-        /* ================= SPA 路由 ================= */
+        /* ================= SPA 路由与鉴权 ================= */
         window.onload = async () => {
             if(sessionStorage.getItem('pos_user')) {
                 activeUser = JSON.parse(sessionStorage.getItem('pos_user'));
@@ -524,7 +541,7 @@
             }
         }
 
-        /* ================= 业务：产品菜单展示 ================= */
+        /* ================= 业务：产品菜单与定制弹窗 ================= */
         function switchCategory(cat) {
             currentCat = cat;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -545,7 +562,6 @@
             }).join('');
         }
 
-        /* ================= 业务：产品深度定制选项弹窗 ================= */
         function openProductModal(pid) {
             const p = allProducts.find(x => x.id === pid);
             if (!p) return;
@@ -605,7 +621,7 @@
                     <input type="text" id="modal-notes" class="login-input" placeholder="Es. Senza panna (其他特殊要求)..." style="font-size:1rem; font-weight:normal; margin-bottom:0; text-align:left;">
                 </div>
                 <div style="padding: 20px; border-top: 1px solid #eee; background:#fafafa; flex-shrink:0;">
-                    <button class="btn-primary" style="padding:20px; font-size:1.2rem;" onclick="confirmCustomOrder()">AGGIUNGI AL CARRELLO (加入购物车)</button>
+                    <button class="btn-primary" style="padding:20px; font-size:1.2rem;" onclick="confirmCustomOrder()">AGGIUNGI AL CARRELLO (加入)</button>
                 </div>
             `;
 
@@ -709,12 +725,67 @@
             document.getElementById('dt-' + type).classList.add('active');
         }
         function applyDiscount() {
-            const val = parseFloat(document.getElementById('discount-input').value) || 0;
-            discountValue = val;
+            discountValue = parseFloat(document.getElementById('discount-input').value) || 0;
             updateCartUI();
             closeDiscountModal();
         }
         function removeDiscount() { discountValue = 0; updateCartUI(); closeDiscountModal(); }
+
+        /* ================= 业务：高级会员系统 CRM ================= */
+        async function searchMember() {
+            const phone = document.getElementById('member-phone').value.trim();
+            if(!phone) { alert("Inserisci il numero! (请输入手机号)"); return; }
+            
+            const { data, error } = await supabaseClient.from('domochi_members').select('*').eq('phone', phone).single();
+            
+            if(data) {
+                currentMember = data;
+                document.getElementById('m-name').innerText = data.name;
+                document.getElementById('m-points').innerText = data.points;
+                document.getElementById('member-search-section').style.display = 'none';
+                document.getElementById('member-info-section').style.display = 'flex';
+                document.getElementById('member-register-section').style.display = 'none';
+                
+                if (data.points >= 50) document.getElementById('btn-redeem').style.display = 'block';
+                else document.getElementById('btn-redeem').style.display = 'none';
+            } else {
+                document.getElementById('member-register-section').style.display = 'flex';
+                alert("Nessun membro trovato, compila il nome per registrare. (未找到会员，输入名字一键注册)");
+            }
+        }
+
+        async function registerMember() {
+            const phone = document.getElementById('member-phone').value.trim();
+            const name = document.getElementById('member-name').value.trim();
+            if(!name || !phone) return;
+
+            const { data, error } = await supabaseClient.from('domochi_members').insert([{ phone, name, points: 0 }]).select().single();
+            if (error) { alert("Errore: " + error.message); return; }
+            
+            alert("Membro registrato! (会员注册成功)");
+            searchMember(); // 刷新显示
+        }
+
+        function clearMember() {
+            currentMember = null;
+            memberDiscountApplied = false;
+            document.getElementById('member-phone').value = '';
+            document.getElementById('member-search-section').style.display = 'flex';
+            document.getElementById('member-info-section').style.display = 'none';
+            document.getElementById('member-register-section').style.display = 'none';
+            updatePayDisplay();
+        }
+
+        function applyMemberDiscount() {
+            if (finalAmountToPay < 5) {
+                alert("L'importo deve essere almeno €5. (总金额须满 €5)"); return;
+            }
+            memberDiscountApplied = true;
+            document.getElementById('btn-redeem').innerText = "Sconto €5 Applicato! (已抵扣)";
+            document.getElementById('btn-redeem').disabled = true;
+            updatePayDisplay();
+        }
+
 
         /* ================= 业务：高级结账 ================= */
         function openPaymentModal() {
@@ -724,7 +795,11 @@
             finalAmountToPay = Math.max(0, subtotal - getDiscountAmount(subtotal));
 
             setSplitMode('all'); 
-            setPayMethod('cash_manual'); // 默认选中人工现金
+            setPayMethod('cash_manual'); 
+            
+            // 清理会员上一次状态
+            clearMember(); 
+
             document.getElementById('payment-modal').classList.add('show');
             updatePayDisplay();
         }
@@ -761,7 +836,12 @@
             document.getElementById('split-even-panel').style.display = mode === 'even' ? 'block' : 'none';
             document.getElementById('split-item-panel').style.display = mode === 'item' ? 'block' : 'none';
 
-            const baseTotal = Math.max(0, getCartSubtotal() - getDiscountAmount(getCartSubtotal()));
+            let baseTotal = Math.max(0, getCartSubtotal() - getDiscountAmount(getCartSubtotal()));
+            
+            // 如果会员使用了积分抵扣
+            if (memberDiscountApplied) {
+                baseTotal = Math.max(0, baseTotal - 5);
+            }
 
             if(mode === 'all') {
                 finalAmountToPay = baseTotal;
@@ -817,11 +897,23 @@
                 const ratio = total / subtotal;
                 total = total - (discountAmt * ratio);
             }
+
+            if (memberDiscountApplied) {
+                total = Math.max(0, total - 5);
+            }
+
             finalAmountToPay = total;
             updatePayDisplay();
         }
 
         function updatePayDisplay() {
+            let baseTotal = Math.max(0, getCartSubtotal() - getDiscountAmount(getCartSubtotal()));
+            if (memberDiscountApplied) {
+                baseTotal = Math.max(0, baseTotal - 5);
+            }
+            
+            if (currentSplitMode === 'all') finalAmountToPay = baseTotal;
+
             document.getElementById('pay-total-display').innerText = `€ ${finalAmountToPay.toFixed(2)}`;
             calcChange(); calcMixed();
         }
@@ -841,7 +933,6 @@
             document.getElementById('mixed-card-rem').innerText = cardRem.toFixed(2);
         }
 
-        // 模拟外部设备 API 调用
         function simulateAutoMachine(type, event) {
             const btn = event.target;
             const origText = btn.innerHTML;
@@ -853,7 +944,6 @@
                 btn.innerHTML = "<i class='fa-solid fa-check'></i> Transazione OK";
                 setTimeout(() => {
                     finalizePayment(true);
-                    // 恢复按钮状态以便下次点击
                     setTimeout(() => { btn.innerHTML = origText; btn.style.background = origBg; }, 500);
                 }, 1000);
             }, 2000);
@@ -876,6 +966,20 @@
                 cardToAdd = finalAmountToPay - cashToAdd;
             }
 
+            // 更新会员积分
+            if (currentMember) {
+                // 每消费1欧积1分
+                const earnedPoints = Math.floor(finalAmountToPay);
+                const usedPoints = memberDiscountApplied ? 50 : 0;
+                const newPointsTotal = currentMember.points + earnedPoints - usedPoints;
+
+                await supabaseClient.from('domochi_members').update({ points: newPointsTotal }).eq('id', currentMember.id);
+                // 提示积分
+                alert(`Pagamento Ricevuto!\n${currentMember.name} ha guadagnato ${earnedPoints} punti.`);
+            } else {
+                alert(`Pagamento Ricevuto! (结账成功)\nContanti: €${cashToAdd.toFixed(2)}\nCarta: €${cardToAdd.toFixed(2)}`);
+            }
+
             shiftData.tot_rev += finalAmountToPay;
             shiftData.cash_rev += cashToAdd;
             shiftData.card_rev += cardToAdd;
@@ -887,13 +991,10 @@
                 selectedItemKeysForSplit = [];
                 updateCartUI();
                 if (Object.keys(cart).length === 0) discountValue = 0; 
-            } else if (currentSplitMode === 'even') {
-                clearCart();
             } else {
                 clearCart();
             }
 
-            alert(`Pagamento Ricevuto! (结账成功)\nContanti: €${cashToAdd.toFixed(2)}\nCarta: €${cardToAdd.toFixed(2)}`);
             closePaymentModal();
         }
     </script>
