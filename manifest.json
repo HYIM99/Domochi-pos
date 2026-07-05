@@ -1,6 +1,6 @@
 {
-  "name": "Domochi CMS",
-  "short_name": "Domochi",
+  "name": "Domochi POS",
+  "short_name": "Domochi POS",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
